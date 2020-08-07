@@ -1,7 +1,7 @@
-package br.com.pablo.banco.dto;
+package br.com.pablo.bank.dto;
 
-import br.com.pablo.banco.model.Account;
-import br.com.pablo.banco.model.AccountType;
+import br.com.pablo.bank.model.Account;
+import br.com.pablo.bank.model.AccountType;
 
 public class WithdrawalDTO {
     private Integer agencyNumber;

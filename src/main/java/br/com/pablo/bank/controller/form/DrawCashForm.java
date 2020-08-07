@@ -1,19 +1,26 @@
-package br.com.pablo.banco.controller.form;
+package br.com.pablo.bank.controller.form;
 
-import br.com.pablo.banco.model.Account;
-import br.com.pablo.banco.model.AccountType;
-import br.com.pablo.banco.repository.AccountRepository;
+import br.com.pablo.bank.model.Account;
+import br.com.pablo.bank.model.AccountType;
+import br.com.pablo.bank.repository.AccountRepository;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-public class DepositForm {
+public class DrawCashForm {
+    @NotNull
     private Integer accountNumber;
+    @NotNull
     private Integer agencyNumber;
+    @NotNull
     private AccountType accountType;
     private String transactionType;
+    @NotNull
     private Long value;
+
     public Optional<Account> converter(AccountRepository accountRepository) {
-        return accountRepository.findByAccountNumber(agencyNumber);
+        return accountRepository.findByAccountNumberAndAgencyNumberAndAccountType(agencyNumber, accountNumber, accountType);
     }
 
     public Integer getAccountNumber() {

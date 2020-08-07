@@ -1,13 +1,13 @@
-package br.com.pablo.banco.service;
+package br.com.pablo.bank.service;
 
-import br.com.pablo.banco.controller.form.BalanceForm;
-import br.com.pablo.banco.controller.form.DepositForm;
-import br.com.pablo.banco.controller.form.DrawCashForm;
-import br.com.pablo.banco.dto.BalanceDTO;
-import br.com.pablo.banco.dto.DepositDTO;
-import br.com.pablo.banco.dto.WithdrawalDTO;
-import br.com.pablo.banco.model.Account;
-import br.com.pablo.banco.repository.AccountRepository;
+import br.com.pablo.bank.controller.form.BalanceForm;
+import br.com.pablo.bank.controller.form.DepositForm;
+import br.com.pablo.bank.controller.form.DrawCashForm;
+import br.com.pablo.bank.dto.BalanceDTO;
+import br.com.pablo.bank.dto.DepositDTO;
+import br.com.pablo.bank.dto.WithdrawalDTO;
+import br.com.pablo.bank.model.Account;
+import br.com.pablo.bank.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,8 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public BalanceDTO getBalance(BalanceForm balanceForm) {
-        Optional<Account> account = accountRepository.findByAccountNumber(balanceForm.getAccountNumber());
+        Optional<Account> account = accountRepository.findByAccountNumberAndAgencyNumberAndAccountType(balanceForm.getAccountNumber(),
+                balanceForm.getAgencyNumber(), balanceForm.getAccountType());
         if (account.isPresent()) {
             String status;
             status = "Successful balance consultation";
@@ -51,12 +52,22 @@ public class TransactionServiceImpl implements TransactionService{
         if (optional.isPresent()) {
             String status;
             Account account = optional.get();
-            account.setBalance(account.getBalance() - drawCashForm.getValue());
+            if (canWithdrawal(account.getBalance(), drawCashForm.getValue())) {
 
-            accountRepository.save(account);
-            status = "Successful withdrawal";
-            return new WithdrawalDTO(optional.get(), status);
+                account.setBalance(account.getBalance() - drawCashForm.getValue());
+
+                accountRepository.save(account);
+                status = "Successful withdrawal";
+                return new WithdrawalDTO(optional.get(), status);
+            }
         }
         return null;
+    }
+
+    public Boolean canWithdrawal(Long actualBalance, Long withdrawalBalance) {
+        if (actualBalance < withdrawalBalance) {
+            return false;
+        }
+        return true;
     }
 }

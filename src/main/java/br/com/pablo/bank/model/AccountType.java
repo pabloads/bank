@@ -1,4 +1,4 @@
-package br.com.pablo.banco.model;
+package br.com.pablo.bank.model;
 
 public enum AccountType {
 
